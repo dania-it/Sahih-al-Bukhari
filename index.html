@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صحيح البخاري</title>
+    <link rel="icon" href="/img/prophet.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Cairo:wght@400;500;600;700;800&family=Reem+Kufi:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        madinah: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            700: '#0f5237',
+                            800: '#0b3f2a',
+                            900: '#072b1d',
+                            950: '#041d13'
+                        },
+                        gold: {
+                            100: '#fef9c3',
+                            300: '#fde047',
+                            400: '#eab308',
+                            500: '#ca8a04',
+                            600: '#a16207',
+                            700: '#854d0e'
+                        },
+                        ivory: {
+                            50: '#fdfcf7',
+                            100: '#fbf9f4',
+                            200: '#f3efe6',
+                            300: '#e7e0d3'
+                        }
+                    },
+                    fontFamily: {
+                        amiri: ['Amiri', 'serif'],
+                        kufi: ['Reem Kufi', 'sans-serif'],
+                        sans: ['Cairo', 'sans-serif'],
+                        serif: ['Lora', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-ivory-100 dark:bg-stone-950 text-stone-800 dark:text-amber-50 min-h-screen flex flex-col antialiased overflow-x-hidden transition-colors duration-300 selection:bg-gold-400 selection:text-madinah-950 [font-feature-settings:'kern'_1,'liga'_1] [text-rendering:optimizeLegibility]">
+
+    <header class="sticky top-0 z-50 bg-white/95 dark:bg-[#0a0f0d]/95 backdrop-blur-xl border-b border-gold-500/20 dark:border-gold-500/20 shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
+            <div class="min-h-[68px] py-2.5 flex items-center justify-between gap-2 sm:gap-4 lg:gap-6">
+                <a href="#" class="flex items-center gap-2 sm:gap-3 min-w-0 group">
+                    <div class="relative shrink-0">
+                        <img src="/img/prophet.png" alt="صحيح البخاري" class="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                    </div>
+                    <div class="leading-none min-w-0">
+                        <div id="site-title" class="text-[13px] sm:text-[15px] font-bold font-kufi text-stone-900 dark:text-white tracking-tight truncate">
+                            صحيح البخاري
+                        </div>
+                        <div id="site-subtitle" class="hidden sm:block text-[9px] sm:text-[10.5px] text-stone-400 dark:text-stone-500 font-sans mt-1 truncate">
+                            الجامع المسند الصحيح المختصر
+                        </div>
+                    </div>
+                </a>
+
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button onclick="toggleBukhariModal(true)" class="flex items-center justify-center gap-2 h-9 min-w-9 px-2.5 sm:px-3 rounded-lg border border-gold-500/50 dark:border-gold-500/60 bg-stone-50 dark:bg-white/5 text-stone-600 dark:text-stone-300 hover:bg-gold-50 dark:hover:bg-gold-500/10 hover:border-gold-400 dark:hover:border-gold-400 hover:text-gold-700 dark:hover:text-gold-300 text-[11px] sm:text-[12px] font-sans font-bold transition-all duration-200 active:scale-95">
+                        <i class="fa-solid fa-user-graduate text-gold-500 text-[12px]"></i>
+                        <span class="hidden sm:inline" id="bio-btn-label">سيرة البخاري</span>
+                    </button>
+
+                    <div class="hidden md:flex items-center h-9 rounded-lg border border-gold-500/40 dark:border-gold-500/50 bg-stone-50 dark:bg-white/5 overflow-hidden">
+                        <button onclick="changeFontSize(-1)" title="تصغير الخط" class="w-8 lg:w-9 h-full flex items-center justify-center text-stone-500 dark:text-stone-400 hover:bg-gold-50 dark:hover:bg-gold-500/10 hover:text-gold-600 dark:hover:text-gold-400 transition-all border-l border-gold-500/20 dark:border-gold-500/20">
+                            <i class="fa-solid fa-minus text-[10px]"></i>
+                        </button>
+                        <span id="font-size-label" class="px-2.5 lg:px-3 text-[10px] lg:text-[11px] font-sans font-bold text-stone-500 dark:text-stone-400 select-none tabular-nums">
+                            100%
+                        </span>
+                        <button onclick="changeFontSize(1)" title="تكبير الخط" class="w-8 lg:w-9 h-full flex items-center justify-center text-stone-500 dark:text-stone-400 hover:bg-gold-50 dark:hover:bg-gold-500/10 hover:text-gold-600 dark:hover:text-gold-400 transition-all border-r border-gold-500/20 dark:border-gold-500/20">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="hidden md:block h-5 w-px bg-gold-500/20"></div>
+
+                    <button onclick="toggleDarkMode()" title="تبديل الوضع" aria-label="تبديل الوضع الليلي" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-lg border border-gold-500/50 dark:border-gold-500/60 bg-stone-50 dark:bg-white/5 text-stone-500 dark:text-stone-400 hover:bg-gold-50 dark:hover:bg-gold-500/10 hover:text-gold-600 dark:hover:text-gold-400 hover:border-gold-400 transition-all duration-200 active:scale-95">
+                        <i id="theme-icon" class="fa-solid fa-moon text-[13px]"></i>
+                    </button>
+
+                    <button onclick="toggleLanguage()" class="flex items-center justify-center gap-1.5 sm:gap-2 h-9 px-2.5 sm:px-4 rounded-lg bg-madinah-800 hover:bg-madinah-700 dark:bg-madinah-800 dark:hover:bg-madinah-700 text-gold-300 hover:text-gold-100 text-[10px] sm:text-[12px] font-sans font-bold border border-gold-500/60 hover:border-gold-400 shadow-sm transition-all duration-200 active:scale-95">
+                        <i class="fa-solid fa-globe text-gold-400 text-[10px] sm:text-[11px]"></i>
+                        <span id="lang-btn-text">English</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto w-full px-3 sm:px-5 lg:px-8 my-4 sm:my-6 lg:my-8">
+        <div class="umayyad-pattern rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 border-2 border-gold-500/80 shadow-2xl relative overflow-hidden text-white bg-madinah-950">
+            <div class="absolute inset-0 bg-gradient-to-l from-madinah-950/95 via-madinah-900/85 to-madinah-950/90 pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-10">
+                <div class="w-full lg:flex-1 space-y-4 sm:space-y-5 text-center lg:text-right">
+                    <h2 id="hero-title" class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-kufi text-gold-300 leading-relaxed tracking-wide drop-shadow-md">
+                        «على خُطى الحبيب ﷺ تسير القلوب»
+                    </h2>
+
+                    <div class="bg-madinah-900/70 backdrop-blur-md border border-gold-500/40 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-xl relative overflow-hidden group hover:border-gold-400 transition-all duration-300">
+                        <div class="absolute inset-y-0 rtl:right-0 ltr:left-0 w-1 sm:w-1.5 bg-gradient-to-b from-gold-300 via-gold-500 to-gold-700"></div>
+                        <p id="hero-quote" class="text-sm sm:text-lg md:text-xl font-amiri text-gold-100 leading-loose px-1 sm:px-2">
+                            رَسُولُ اللَّهِ ﷺ: "تَرَكْتُ فِيكُمْ أَمْرَيْنِ لَنْ تَضِلُّوا مَا تَمَسَّكْتُمْ بِهِمَا: كِتَابَ اللَّهِ وَسُنَّةَ نَبِيِّهِ".
+                        </p>
+                        <span id="hero-quote-source" class="block text-[11px] sm:text-xs md:text-sm text-gold-400/90 font-sans font-medium mt-3">
+                            — رواه مالك
+                        </span>
+                    </div>
+                </div>
+
+                <div class="shrink-0 flex justify-center w-full lg:w-auto">
+                    <div class="relative group">
+                        <div class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-52 lg:h-52 rounded-2xl p-1 bg-gradient-to-br from-gold-300 via-gold-500 to-gold-700 shadow-2xl transition-all duration-300 group-hover:scale-105 border border-gold-300/50">
+                            <div class="w-full h-full rounded-[14px] overflow-hidden bg-madinah-900">
+                                <img src="/img/madina1.jpg" alt="الروضة الشريفة" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-5 lg:px-8 py-2 sm:py-4 transition-colors duration-300">
+        <div class="bg-ivory-50 dark:bg-madinah-900/90 rounded-2xl sm:rounded-3xl shadow-md border border-gold-500/30 p-3 sm:p-5 mb-5 sm:mb-8 transition-all">
+            <div class="flex flex-col gap-3 mb-1">
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-1 min-w-0">
+                        <div class="absolute inset-y-0 rtl:right-4 ltr:left-4 flex items-center pointer-events-none text-gold-500">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </div>
+
+                        <input type="text" id="search-input" placeholder="ابحث في نص الحديث، الراوي، أو الرقم..." class="w-full rtl:pr-11 rtl:pl-10 ltr:pl-11 ltr:pr-10 py-3 bg-white dark:bg-stone-950 border border-gold-500/30 hover:border-gold-500/50 rounded-xl sm:rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500 text-sm font-sans text-stone-800 dark:text-stone-100 placeholder-stone-400 shadow-inner transition-all">
+
+                        <button id="search-clear-btn" onclick="clearSearch()" aria-label="مسح البحث" class="absolute inset-y-0 rtl:left-3 ltr:right-3 hidden items-center text-stone-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+
+                    <button id="filter-toggle-btn" onclick="toggleFiltersModal(true)" aria-haspopup="dialog" aria-controls="filters-modal" class="relative shrink-0 flex items-center justify-center gap-2 h-[46px] sm:h-auto w-[46px] sm:w-auto sm:px-4 sm:py-3 bg-white dark:bg-stone-950 border border-gold-500/30 hover:border-gold-500/60 hover:bg-gold-50 dark:hover:bg-gold-500/10 rounded-xl sm:rounded-2xl shadow-inner transition-all active:scale-95">
+                        <i class="fa-solid fa-sliders text-gold-500 text-sm"></i>
+                        <span id="filter-toggle-label" class="hidden sm:inline text-sm font-sans font-semibold text-stone-700 dark:text-stone-200">
+                            فلترة
+                        </span>
+                        <span id="filter-badge" class="hidden absolute -top-1.5 rtl:-left-1.5 ltr:-right-1.5 bg-gold-500 text-madinah-950 text-[10px] font-bold w-4 h-4 rounded-full items-center justify-center leading-none">
+                            0
+                        </span>
+                    </button>
+                </div>
+
+                <button id="chapters-drawer-trigger" onclick="toggleChaptersDrawer(true)" class="lg:hidden flex items-center justify-between w-full py-3 px-4 bg-white dark:bg-stone-950 border border-gold-500/30 hover:border-gold-500/50 rounded-xl sm:rounded-2xl shadow-inner transition-all active:scale-[.99]">
+                    <span class="flex items-center gap-2.5 min-w-0">
+                        <i class="fa-solid fa-book-open text-gold-500 text-sm shrink-0"></i>
+                        <span id="chapters-trigger-label" class="text-sm font-sans font-semibold text-stone-700 dark:text-stone-200 truncate">
+                            جميع الأبواب
+                        </span>
+                    </span>
+                    <i class="fa-solid fa-chevron-down rtl:rotate-0 text-xs text-stone-400 shrink-0"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 mt-3">
+                <span id="results-count" class="text-[11px] sm:text-xs font-bold text-madinah-800 dark:text-gold-400 font-sans whitespace-nowrap">
+                    جاري التحميل...
+                </span>
+            </div>
+
+            <div id="active-filters-row" class="hidden items-center flex-wrap gap-2 mt-3 pt-3 border-t border-gold-500/15">
+                <div id="active-filters" class="flex items-center gap-1.5 flex-wrap"></div>
+                <button id="clear-all-filters-btn" onclick="clearAllFilters()" class="text-[11px] font-bold font-sans text-rose-700 dark:text-rose-400 underline underline-offset-2 hover:text-rose-800 dark:hover:text-rose-300 transition-colors">
+                    مسح الكل
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+            <aside class="lg:col-span-1 bg-ivory-50 dark:bg-madinah-900/80 rounded-2xl border border-gold-500/20 overflow-hidden h-fit sticky top-20 hidden lg:block shadow-sm transition-colors duration-300">
+                <div class="flex items-center gap-2.5 px-4 py-3 bg-madinah-800/5 dark:bg-madinah-900 border-b border-gold-500/15">
+                    <div class="w-6 h-6 rounded-lg bg-madinah-800 flex items-center justify-center shrink-0 shadow-sm">
+                        <i class="fa-solid fa-list-ul text-gold-400 text-[10px]"></i>
+                    </div>
+                    <span id="chapters-sidebar-title-text" class="text-[13px] font-bold font-sans text-madinah-800 dark:text-gold-400">
+                        أبواب الكتاب
+                    </span>
+                </div>
+                <nav id="chapters-list" class="p-2 styled-scroll max-h-[calc(100vh-200px)] overflow-y-auto"></nav>
+            </aside>
+
+            <section class="lg:col-span-3 min-w-0 space-y-5 sm:space-y-6">
+                <div id="hadith-container" class="space-y-5 sm:space-y-6"></div>
+
+                <div id="pagination-controls" class="bg-ivory-50 dark:bg-madinah-900/90 rounded-2xl border border-gold-500/30 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 font-sans shadow-md">
+                    <div id="pagination-info" class="text-[11px] sm:text-xs font-semibold text-stone-600 dark:text-stone-300 text-center">
+                        الصفحة 1 من 1
+                    </div>
+                    <div id="pagination-buttons" class="flex items-center flex-wrap justify-center gap-1.5 sm:gap-2"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-madinah-950 dark:bg-[#050d08] text-white pt-8 sm:pt-12 pb-[calc(1.5rem+env(safe-area-inset-bottom))] border-t border-gold-500/20 font-sans transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8 pb-8 sm:pb-10 text-center md:text-right">
+                <div class="footer-col space-y-4 flex flex-col items-center md:items-start">
+                    <div class="flex items-center gap-2.5">
+                        <img src="/img/prophet.png" alt="صحيح البخاري" class="w-9 h-9 object-contain shrink-0" />
+                        <h3 id="footer-title" class="text-lg sm:text-xl font-bold text-white font-kufi">
+                            صحيح البخاري
+                        </h3>
+                    </div>
+
+                    <p id="footer-subtitle" class="text-xs text-stone-300 leading-relaxed max-w-sm">
+                        مكتبة إلكترونية شاملة مخصصة لخدمة وعرض أحاديث صحيح البخاري بيسر وسهولة، بمميزات بحث تفاعلية تناسب طلاب العلم والعموم.
+                    </p>
+
+                    <div class="flex items-center justify-center md:justify-start gap-2 pt-1">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook" class="w-8 h-8 rounded-lg bg-white/5 border border-gold-500/20 hover:border-gold-500/60 hover:bg-gold-500/20 text-stone-300 hover:text-gold-400 flex items-center justify-center transition-all">
+                            <i class="fa-brands fa-facebook-f text-xs"></i>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram" class="w-8 h-8 rounded-lg bg-white/5 border border-gold-500/20 hover:border-gold-500/60 hover:bg-gold-500/20 text-stone-300 hover:text-gold-400 flex items-center justify-center transition-all">
+                            <i class="fa-brands fa-instagram text-xs"></i>
+                        </a>
+                        <a href="https://wa.me/966500000000" target="_blank" rel="noopener noreferrer" title="WhatsApp" class="w-8 h-8 rounded-lg bg-white/5 border border-gold-500/20 hover:border-gold-500/60 hover:bg-gold-500/20 text-stone-300 hover:text-gold-400 flex items-center justify-center transition-all">
+                            <i class="fa-brands fa-whatsapp text-xs"></i>
+                        </a>
+                        <a href="https://x.com" target="_blank" rel="noopener noreferrer" title="X / Twitter" class="w-8 h-8 rounded-lg bg-white/5 border border-gold-500/20 hover:border-gold-500/60 hover:bg-gold-500/20 text-stone-300 hover:text-gold-400 flex items-center justify-center transition-all">
+                            <i class="fa-brands fa-x-twitter text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col space-y-3 flex flex-col items-center md:items-start md:mx-auto">
+                    <h4 id="footer-links-title" class="text-base font-bold text-gold-400">
+                        روابط سريعة
+                    </h4>
+
+                    <ul class="space-y-2.5 text-xs text-stone-300">
+                        <li>
+                            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hover:text-gold-400 transition-colors">
+                                <span id="footer-link-home">الرئيسية</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="toggleBukhariModal(true)" class="hover:text-gold-400 transition-colors">
+                                <span id="footer-link-bio">سيرة الإمام البخاري</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="toggleBookmarksFilter()" class="hover:text-gold-400 transition-colors">
+                                <span id="footer-link-bookmarks">الأحاديث المفضلة</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-col space-y-3 flex flex-col items-center md:items-start md:mr-auto">
+                    <h4 id="footer-contact-title" class="text-base font-bold text-gold-400">
+                        تواصل معنا
+                    </h4>
+
+                    <div class="space-y-3 text-xs text-stone-300">
+                        <a href="mailto:contact@bukhari-app.com" class="flex items-center gap-2.5 hover:text-gold-400 transition-colors">
+                            <i class="fa-regular fa-envelope text-gold-400 text-sm w-4"></i>
+                            <span id="footer-contact-email">contact@bukhari-app.com</span>
+                        </a>
+                        <a href="tel:+966500000000" class="flex items-center gap-2.5 hover:text-gold-400 transition-colors">
+                            <i class="fa-solid fa-phone text-gold-400 text-sm w-4"></i>
+                            <span id="footer-contact-phone" dir="ltr">+966 50 000 0000</span>
+                        </a>
+                        <div class="flex items-center gap-2.5 text-stone-300">
+                            <i class="fa-solid fa-location-dot text-gold-400 text-sm w-4"></i>
+                            <span id="footer-contact-location">المدينة المنورة، المملكة العربية السعودية</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-5 sm:pt-6 border-t border-gold-500/15 text-center text-[10px] sm:text-xs text-stone-400">
+                <div id="footer-rights">
+                    جميع الحقوق محفوظة © 2026 منصة صحيح البخاري
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button id="scroll-top-btn" onclick="scrollToTop()" aria-label="العودة إلى الأعلى" title="العودة إلى الأعلى" class="fixed bottom-5 sm:bottom-7 rtl:left-5 ltr:right-5 sm:rtl:left-7 sm:ltr:right-7 z-40 w-11 h-11 rounded-full bg-madinah-800 hover:bg-madinah-700 text-gold-300 border border-gold-500/50 shadow-xl flex items-center justify-center active:scale-90 opacity-0 translate-y-3 scale-90 pointer-events-none transition-all duration-300">
+        <i class="fa-solid fa-arrow-up text-sm"></i>
+    </button>
+
+    <div id="toast" class="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-auto max-w-sm bg-madinah-900 text-gold-300 px-4 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-2xl flex items-center justify-center space-x-3 space-x-reverse opacity-0 pointer-events-none transition-all duration-300 z-50 text-xs sm:text-sm border border-gold-500">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-gold-400 text-base sm:text-lg"></i>
+        <span id="toast-message" class="font-sans font-medium text-center">تمت العملية بنجاح</span>
+    </div>
+
+    <div id="bukhari-modal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="bukhari-modal-card" class="bg-ivory-50 dark:bg-stone-900 border-2 border-gold-500/50 rounded-2xl sm:rounded-3xl w-full max-w-2xl max-h-[92vh] sm:max-h-[85vh] overflow-y-auto styled-scroll shadow-2xl transition-transform duration-300 scale-95 relative">
+            <div class="umayyad-pattern p-4 sm:p-6 rounded-t-[14px] sm:rounded-t-[22px] text-white relative border-b border-gold-500/40">
+                <h3 class="text-lg sm:text-2xl md:text-3xl font-bold font-kufi text-gold-300 leading-relaxed pr-1">
+                    الإمام أبو عبد الله محمد بن إسماعيل البخاري
+                </h3>
+                <p class="text-[10px] sm:text-xs text-gold-100 font-sans mt-1">
+                    (194 هـ - 256 هـ / 810 م - 870 م)
+                </p>
+            </div>
+
+            <div class="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 font-amiri text-stone-800 dark:text-stone-200 text-base sm:text-lg leading-relaxed">
+                <div class="space-y-2">
+                    <h4 class="text-lg sm:text-xl font-bold font-kufi text-madinah-800 dark:text-gold-400 flex items-start gap-2">
+                        <i class="fa-solid fa-user-graduate text-gold-500 text-sm sm:text-base mt-1 shrink-0"></i>
+                        <span>نشأته وطلبه للعلم</span>
+                    </h4>
+                    <p class="text-sm sm:text-base text-stone-600 dark:text-stone-300">
+                        ولد في بخارى شوال سنة 194 هـ، ونشأ يتيماً في كفالة والده الذي كان من أهل العلم. حفظ القرآن الكريم وأمهات الكتب وهو لم يناهز عشر سنين، وأودع الله فيه قوة حفظ استثنائية.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-lg sm:text-xl font-bold font-kufi text-madinah-800 dark:text-gold-400 flex items-start gap-2">
+                        <i class="fa-solid fa-route text-gold-500 text-sm sm:text-base mt-1 shrink-0"></i>
+                        <span>رحلاته العلمية</span>
+                    </h4>
+                    <p class="text-sm sm:text-base text-stone-600 dark:text-stone-300">
+                        رحل في طلب الحديث إلى معظم أقطار العالم الإسلامي؛ فزار مكة والمدينة والبصرة والكوفة وبغداد ومصر والشام، وسمع من أكثر من ألف شيخ، وجمع مئات الآلاف من الأحاديث.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-lg sm:text-xl font-bold font-kufi text-madinah-800 dark:text-gold-400 flex items-start gap-2">
+                        <i class="fa-solid fa-book-bookmark text-gold-500 text-sm sm:text-base mt-1 shrink-0"></i>
+                        <span>جمع الجامع الصحيح</span>
+                    </h4>
+                    <p class="text-sm sm:text-base text-stone-600 dark:text-stone-300">
+                        استغرق في تصنيف كِتابه "الجامع الصحيح" 16 سنة، وانتقاه من بين 600,000 حديث. وكان لا يضع حديثاً في كتابه إلا بعد أن يغتسل ويصلي ركعتين يستخير الله فيها.
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-3 sm:p-4 bg-stone-100 dark:bg-stone-950/50 border-t border-gold-500/20 rounded-b-[14px] sm:rounded-b-[22px] flex justify-center sm:justify-end">
+                <button onclick="toggleBukhariModal(false)" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-madinah-800 hover:bg-madinah-700 text-gold-300 hover:text-gold-100 border border-gold-500/50 hover:border-gold-400 font-sans font-bold text-xs transition-all active:scale-95">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="filters-modal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="filters-modal-card" class="bg-ivory-50 dark:bg-stone-900 border-2 border-gold-500/50 rounded-2xl sm:rounded-3xl w-full max-w-md shadow-2xl transition-transform duration-300 scale-95 relative">
+            <div class="flex items-center justify-between p-4 sm:p-5 border-b border-gold-500/20">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-madinah-800 flex items-center justify-center shrink-0 shadow-sm">
+                        <i class="fa-solid fa-sliders text-gold-400 text-xs"></i>
+                    </div>
+                    <span id="filters-modal-title" class="text-sm font-bold font-sans text-madinah-800 dark:text-gold-400">
+                        فلترة النتائج
+                    </span>
+                </div>
+
+                <button onclick="toggleFiltersModal(false)" aria-label="إغلاق" class="w-8 h-8 rounded-lg flex items-center justify-center text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-gold-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div class="p-4 sm:p-5 space-y-4">
+                <div>
+                    <p id="filters-modal-length-label" class="text-xs font-bold font-sans text-stone-500 dark:text-stone-400 mb-2">
+                        طول الحديث
+                    </p>
+
+                    <div class="flex items-center gap-1.5 bg-stone-100 dark:bg-stone-950 rounded-xl p-1 border border-gold-500/20">
+                        <button onclick="setLengthFilter('all')" id="len-btn-all" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-sans font-semibold transition-all duration-200 bg-madinah-800 text-gold-300 border border-gold-500/40 shadow-sm">
+                            <i class="fa-solid fa-layer-group text-[10px]"></i>
+                            <span id="len-label-all">الكل</span>
+                        </button>
+
+                        <button onclick="setLengthFilter('short')" id="len-btn-short" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-sans font-semibold transition-all duration-200 text-stone-500 dark:text-stone-400 hover:text-madinah-800 dark:hover:text-gold-300 hover:bg-white dark:hover:bg-white/5">
+                            <i class="fa-solid fa-align-left text-[10px]"></i>
+                            <span id="len-label-short">قصيرة</span>
+                        </button>
+
+                        <button onclick="setLengthFilter('long')" id="len-btn-long" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-sans font-semibold transition-all duration-200 text-stone-500 dark:text-stone-400 hover:text-madinah-800 dark:hover:text-gold-300 hover:bg-white dark:hover:bg-white/5">
+                            <i class="fa-solid fa-align-justify text-[10px]"></i>
+                            <span id="len-label-long">طويلة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="toggleBookmarksFilter()" id="bookmark-filter-btn" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gold-500/30 bg-white dark:bg-stone-950 text-stone-600 dark:text-stone-400 hover:border-gold-500 hover:text-gold-600 dark:hover:text-gold-400 hover:bg-gold-50 dark:hover:bg-gold-500/10 text-xs font-sans font-semibold transition-all duration-200 shadow-sm">
+                    <i class="fa-regular fa-bookmark text-gold-500 text-sm"></i>
+                    <span id="bookmarks-btn-label">المفضلة</span>
+                    <span id="bookmarks-count" class="hidden bg-gold-500 text-madinah-950 text-[10px] font-bold w-4 h-4 rounded-full items-center justify-center">
+                        0
+                    </span>
+                </button>
+            </div>
+
+            <div class="p-3 sm:p-4 bg-stone-100 dark:bg-stone-950/50 border-t border-gold-500/20 rounded-b-2xl sm:rounded-b-3xl flex justify-end">
+                <button onclick="toggleFiltersModal(false)" id="filters-modal-done-btn" class="px-6 py-2.5 rounded-xl bg-madinah-800 hover:bg-madinah-700 text-gold-300 hover:text-gold-100 border border-gold-500/50 hover:border-gold-400 font-sans font-bold text-xs transition-all active:scale-95">
+                    تم
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chapters-drawer" class="fixed inset-0 z-[60] lg:hidden bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end justify-center">
+        <div id="chapters-drawer-panel" class="w-full max-w-2xl bg-ivory-50 dark:bg-stone-900 rounded-t-3xl border-t-2 border-x-2 border-gold-500/40 shadow-2xl max-h-[80vh] flex flex-col overflow-hidden translate-y-full transition-transform duration-300 ease-out">
+            <div class="pt-3 pb-2">
+                <div class="w-10 h-1 rounded-full bg-gold-500/35 mx-auto"></div>
+            </div>
+
+            <div class="flex items-center justify-between px-4 sm:px-5 pb-3 border-b border-gold-500/15">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-madinah-800 flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-list-ul text-gold-400 text-[11px]"></i>
+                    </div>
+                    <span id="chapters-drawer-title" class="text-sm font-bold font-sans text-madinah-800 dark:text-gold-400">
+                        أبواب الكتاب
+                    </span>
+                </div>
+
+                <button onclick="toggleChaptersDrawer(false)" aria-label="إغلاق" class="w-8 h-8 rounded-lg flex items-center justify-center text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-gold-600 transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <nav id="chapters-list-mobile" class="p-3 styled-scroll overflow-y-auto flex-1"></nav>
+        </div>
+    </div>
+
+    <script src="/JS/script.js"></script>
+    <script src="/JS/search.js"></script>
+    <script src="/JS/filters.js"></script>
+    <script src="/JS/render.js"></script>
+
+</body>
+
+</html>
