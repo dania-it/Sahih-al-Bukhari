@@ -19,7 +19,7 @@ An interactive, high-performance website designed to explore and browse the comp
 
 ** High Performance:** Fast loading times and instant response using pure JavaScript data processing.
 ** Internationalization (i18n):** Full support for Arabic (RTL) and English (LTR) with dynamic UI restructuring.
-** Chapter Browsing (الأبواب):** Intuitive navigation allowing users to filter and read Hadiths organized by specific Islamic chapters and books.
+** Chapter Browsing :** Intuitive navigation allowing users to filter and read Hadiths organized by specific Islamic chapters and books.
 ** Smart Pagination:** Smooth client-side pagination system designed to handle large datasets effortlessly.
 ** Smart Search & Filtering:** Diacritics-insensitive search with term highlighting and length-based filtering (Short/Long).
 ** Dynamic Theme Switcher:** Fully integrated Dark & Light modes for optimal visual comfort.
