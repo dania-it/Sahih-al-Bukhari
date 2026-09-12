@@ -1,6 +1,8 @@
 ﻿let allHadiths = [];
 let allChapters = [];
 let filteredHadiths = [];
+let totalHadithsKnown = 0;
+let backgroundLoadNote = '';
 let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
 let currentPage = 1;
 const itemsPerPage = 20;
@@ -182,6 +184,20 @@ function renderSkeleton() {
 }
 
 async function fetchBukhariJSON() {
+    const cached = await getCachedBukhariData();
+    if (cached) {
+        processData(cached);
+        refreshDataInBackground();
+        return;
+    }
+
+    const usedChunks = await loadFromChunkedFormat();
+    if (!usedChunks) {
+        await fetchLegacyBukhariJSON();
+    }
+}
+
+async function fetchLegacyBukhariJSON() {
     try {
         const response = await fetch('./data/bukhari.json');
         if (!response.ok) {
@@ -189,6 +205,7 @@ async function fetchBukhariJSON() {
         }
         const data = await response.json();
         processData(data);
+        setCachedBukhariData(data);
     } catch (error) {
         console.error('Error loading data:', error);
         const container = document.getElementById('hadith-container');
@@ -208,11 +225,142 @@ async function fetchBukhariJSON() {
     }
 }
 
+async function loadFromChunkedFormat() {
+    let meta;
+    try {
+        const response = await fetch('./data/meta.json');
+        if (!response.ok) return false;
+        meta = await response.json();
+    } catch (error) {
+        return false;
+    }
+
+    if (!meta || !Array.isArray(meta.index) || !meta.chunkCount) return false;
+
+    totalHadithsKnown = meta.totalHadiths || meta.index.length;
+    setChaptersFromRawList(meta.chapters);
+    renderChaptersLists();
+    updateBookmarksCount();
+
+    try {
+        const firstChunkRes = await fetch('./data/chunk-0.json');
+        if (!firstChunkRes.ok) return false;
+        const firstChunk = await firstChunkRes.json();
+        allHadiths = firstChunk.hadiths || [];
+        applyFilters();
+    } catch (error) {
+        return false;
+    }
+
+    streamRemainingChunks(meta);
+    return true;
+}
+
+async function streamRemainingChunks(meta) {
+    for (let i = 1; i < meta.chunkCount; i++) {
+        try {
+            const response = await fetch(`./data/chunk-${i}.json`);
+            if (response.ok) {
+                const chunk = await response.json();
+                allHadiths = allHadiths.concat(chunk.hadiths || []);
+                backgroundLoadNote = currentLanguage === 'en'
+                    ? ` (loading more… ${i + 1}/${meta.chunkCount})`
+                    : ` (جاري تحميل الباقي... ${i + 1}/${meta.chunkCount})`;
+                applyFilters(true);
+            }
+        } catch (error) {}
+    }
+
+    backgroundLoadNote = '';
+    totalHadithsKnown = allHadiths.length;
+    updateResultsCount();
+    setCachedBukhariData({ chapters: meta.chapters || [], hadiths: allHadiths });
+}
+
+const DATA_CACHE_DB_NAME = 'bukhari-cache';
+const DATA_CACHE_STORE_NAME = 'kv';
+const DATA_CACHE_KEY = 'bukhari-json-v1';
+
+function openDataCacheDB() {
+    return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window)) {
+            reject(new Error('IndexedDB unsupported'));
+            return;
+        }
+        const request = indexedDB.open(DATA_CACHE_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+            request.result.createObjectStore(DATA_CACHE_STORE_NAME);
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getCachedBukhariData() {
+    try {
+        const db = await openDataCacheDB();
+        return await new Promise((resolve) => {
+            const tx = db.transaction(DATA_CACHE_STORE_NAME, 'readonly');
+            const req = tx.objectStore(DATA_CACHE_STORE_NAME).get(DATA_CACHE_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+        });
+    } catch (error) {
+        return null;
+    }
+}
+
+async function setCachedBukhariData(data) {
+    try {
+        const db = await openDataCacheDB();
+        await new Promise((resolve) => {
+            const tx = db.transaction(DATA_CACHE_STORE_NAME, 'readwrite');
+            tx.objectStore(DATA_CACHE_STORE_NAME).put(data, DATA_CACHE_KEY);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => resolve();
+        });
+    } catch (error) {}
+}
+
+async function refreshDataInBackground() {
+    try {
+        const metaRes = await fetch('./data/meta.json', { cache: 'no-cache' });
+        if (metaRes.ok) {
+            const meta = await metaRes.json();
+            if (meta && Array.isArray(meta.index) && meta.chunkCount) {
+                const hadiths = [];
+                for (let i = 0; i < meta.chunkCount; i++) {
+                    const chunkRes = await fetch(`./data/chunk-${i}.json`, { cache: 'no-cache' });
+                    if (!chunkRes.ok) return;
+                    const chunk = await chunkRes.json();
+                    hadiths.push(...(chunk.hadiths || []));
+                }
+                setCachedBukhariData({ chapters: meta.chapters || [], hadiths });
+                return;
+            }
+        }
+    } catch (error) {}
+
+    try {
+        const response = await fetch('./data/bukhari.json', { cache: 'no-cache' });
+        if (!response.ok) return;
+        const data = await response.json();
+        setCachedBukhariData(data);
+    } catch (error) {}
+}
+
 function processData(data) {
     allHadiths = data.hadiths || data.items || (Array.isArray(data) ? data : []);
+    totalHadithsKnown = allHadiths.length;
+    setChaptersFromRawList(data.chapters);
+    renderChaptersLists();
+    updateBookmarksCount();
+    applyFilters();
+}
 
-    if (data.chapters && Array.isArray(data.chapters)) {
-        allChapters = data.chapters.map(c => ({
+function setChaptersFromRawList(rawChapters) {
+    if (rawChapters && Array.isArray(rawChapters) && rawChapters.length > 0) {
+        allChapters = rawChapters.map(c => ({
             id: String(c.id),
             name: c.arabic || c.name || c.title || `كتاب ${c.id}`,
             nameEn: c.english || c.nameEn || c.titleEn || `Book ${c.id}`
@@ -220,10 +368,6 @@ function processData(data) {
     } else {
         allChapters = extractChaptersFromHadiths(allHadiths);
     }
-
-    renderChaptersLists();
-    updateBookmarksCount();
-    applyFilters();
 }
 
 function extractChaptersFromHadiths(hadiths) {
@@ -279,7 +423,7 @@ function buildChaptersListHTML(prefix) {
     >
         <span>${t.allChapters}</span>
         <span class="text-[10px] bg-stone-200/50 dark:bg-stone-800 px-2 py-0.5 rounded-full">
-            ${allHadiths.length}
+            ${totalHadithsKnown || allHadiths.length}
         </span>
     </button>
 `;
@@ -550,9 +694,9 @@ function updateResultsCount() {
     const element = document.getElementById('results-count');
     if (!element) return;
 
-    element.innerText = currentLanguage === 'en'
+    element.innerText = (currentLanguage === 'en'
         ? `${filteredHadiths.length} Hadiths found`
-        : `تم العثور على ${filteredHadiths.length} حديث`;
+        : `تم العثور على ${filteredHadiths.length} حديث`) + backgroundLoadNote;
 }
 
 function showToast(message, isError = false) {

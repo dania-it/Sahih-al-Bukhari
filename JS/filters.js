@@ -100,9 +100,16 @@ function filterHadiths(hadiths) {
     });
 }
 
-function applyFilters() {
+function applyFilters(preserveState = false) {
     filteredHadiths = filterHadiths(allHadiths);
-    currentPage = 1;
+
+    if (preserveState) {
+        const totalPages = Math.ceil(filteredHadiths.length / itemsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+    } else {
+        currentPage = 1;
+    }
+
     renderCurrentPage();
     renderPagination();
     updateResultsCount();
