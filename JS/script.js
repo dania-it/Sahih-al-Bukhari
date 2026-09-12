@@ -2,7 +2,6 @@
 let allChapters = [];
 let filteredHadiths = [];
 let totalHadithsKnown = 0;
-let backgroundLoadNote = '';
 let bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
 let currentPage = 1;
 const itemsPerPage = 20;
@@ -263,17 +262,12 @@ async function streamRemainingChunks(meta) {
             if (response.ok) {
                 const chunk = await response.json();
                 allHadiths = allHadiths.concat(chunk.hadiths || []);
-                backgroundLoadNote = currentLanguage === 'en'
-                    ? ` (loading more… ${i + 1}/${meta.chunkCount})`
-                    : ` (جاري تحميل الباقي... ${i + 1}/${meta.chunkCount})`;
-                applyFilters(true);
             }
         } catch (error) {}
     }
 
-    backgroundLoadNote = '';
     totalHadithsKnown = allHadiths.length;
-    updateResultsCount();
+    applyFilters(true);
     setCachedBukhariData({ chapters: meta.chapters || [], hadiths: allHadiths });
 }
 
@@ -694,9 +688,18 @@ function updateResultsCount() {
     const element = document.getElementById('results-count');
     if (!element) return;
 
-    element.innerText = (currentLanguage === 'en'
-        ? `${filteredHadiths.length} Hadiths found`
-        : `تم العثور على ${filteredHadiths.length} حديث`) + backgroundLoadNote;
+    const noFiltersActive = !filterState.searchQuery
+        && filterState.chapter === 'all'
+        && filterState.length === 'all'
+        && !filterState.onlyBookmarks;
+
+    const count = (noFiltersActive && totalHadithsKnown)
+        ? totalHadithsKnown
+        : filteredHadiths.length;
+
+    element.innerText = currentLanguage === 'en'
+        ? `${count} Hadiths found`
+        : `تم العثور على ${count} حديث`;
 }
 
 function showToast(message, isError = false) {
